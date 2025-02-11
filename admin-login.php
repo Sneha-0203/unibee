@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start session for admin login
+session_start(); // Start the session
 
 $servername = "localhost";
 $username = "root";
@@ -14,7 +14,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Get user input
+// Get admin credentials from form
 $email = $_POST['email'];
 $password = $_POST['password'];
 
@@ -28,7 +28,7 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     if (password_verify($password, $row['password'])) {
-        // Set session variables
+        // Set session for admin
         $_SESSION['admin_id'] = $row['id'];
         $_SESSION['admin_email'] = $row['email'];
 
@@ -36,12 +36,12 @@ if ($result->num_rows > 0) {
         header("Location: admin-dashboard.php");
         exit();
     } else {
-        echo "<script>alert('Invalid credentials!'); window.location.href='admin-login.html';</script>";
+        echo "<script>alert('Invalid credentials!'); window.location.href='admin-auth.html';</script>";
     }
 } else {
-    echo "<script>alert('No admin found!'); window.location.href='admin-login.html';</script>";
+    echo "<script>alert('No admin found!'); window.location.href='admin-auth.html';</script>";
 }
 
-// Close connection
+$stmt->close();
 $conn->close();
 ?>
