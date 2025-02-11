@@ -12,27 +12,23 @@ if ($conn->connect_error) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $token = $_POST['token'];
-    $new_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $newPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    // Verify token
-    $sql = "SELECT * FROM admins WHERE reset_token=? AND reset_expiry > NOW()";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $token);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        // Update the admin's password
-        $update_sql = "UPDATE admins SET password=?, reset_token=NULL, reset_expiry=NULL WHERE reset_token=?";
-        $stmt = $conn->prepare($update_sql);
-        $stmt->bind_param("ss", $new_password, $token);
-        $stmt->execute();
-
-        echo "<script>alert('Password updated successfully!'); window.location.href='admin-auth.html';</script>";
+    // Update admin password in database
+    $sql = "UPDATE admins SET password='$newPassword', reset_token=NULL WHERE reset_token='$token'";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "Password reset successful! You can now <a href='admin-auth.html'>login</a>.";
     } else {
-        echo "<script>alert('Invalid or expired token.'); window.location.href='admin-forgot-password.html';</script>";
+        echo "Error resetting password.";
     }
 }
-
 $conn->close();
 ?>
+
+<!-- HTML Form -->
+<form method="POST">
+    <input type="hidden" name="token" value="<?php echo $_GET['token']; ?>">
+    <input type="password" name="password" placeholder="New Password" required>
+    <button type="submit">Update Password</button>
+</form>
