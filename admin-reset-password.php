@@ -1,4 +1,5 @@
 <?php
+session_start();
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -12,23 +13,35 @@ if ($conn->connect_error) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $token = $_POST['token'];
-    $newPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
 
-    // Update admin password in database
-    $sql = "UPDATE admins SET password='$newPassword', reset_token=NULL WHERE reset_token='$token'";
-    
-    if ($conn->query($sql) === TRUE) {
-        echo "Password reset successful! You can now <a href='admin-auth.html'>login</a>.";
+    if ($new_password !== $confirm_password) {
+        echo "Passwords do not match!";
+        exit();
+    }
+
+    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+    $sql = "SELECT * FROM admins WHERE reset_token='$token' AND reset_expires > NOW()";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $email = $row['email'];
+
+        $update_sql = "UPDATE admins SET password='$hashed_password', reset_token=NULL, reset_expires=NULL WHERE email='$email'";
+        if ($conn->query($update_sql) === TRUE) {
+            echo "Password updated successfully!";
+            header("Location: admin-auth.html"); // Redirect to admin login page
+            exit();
+        } else {
+            echo "Error updating password: " . $conn->error;
+        }
     } else {
-        echo "Error resetting password.";
+        echo "Invalid or expired token!";
     }
 }
+
 $conn->close();
 ?>
-
-<!-- HTML Form -->
-<form method="POST">
-    <input type="hidden" name="token" value="<?php echo $_GET['token']; ?>">
-    <input type="password" name="password" placeholder="New Password" required>
-    <button type="submit">Update Password</button>
-</form>
