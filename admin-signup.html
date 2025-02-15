@@ -1,0 +1,17 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Signup</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/validation.js"></script>
+</head>
+<body>
+    <h2>Admin Signup</h2>
+    <form method="POST" action="admin-signup.php" onsubmit="return validateForm()">
+        <input type="email" id="email" name="email" placeholder="Email" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <button type="submit">Sign Up</button>
+    </form>
+</body>
+</html>

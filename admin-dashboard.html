@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin-dashboard.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Uni Bee</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html">Dashboard</a></li>
+            <li><a href="add-product.html">Add Products</a></li>
+            <li><a href="product-history.html">Product History</a></li>
+            <li><a href="sales-report.html">Sales Report</a></li>
+            <li><a href="logout.html" class="logout-button">Logout</a></li>
+        </ul>
+    </div>
+   
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Welcome, Admin!</h1>
+        <p>Manage your store efficiently with the tools below.</p>
+        <p>Hello, <?php echo htmlspecialchars($admin['name']); ?>! Your last login was at <?php echo $admin['last_login']; ?>.</p>
+    </div>
+</body>
+</html>

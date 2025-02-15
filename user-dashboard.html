@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Uni Bee</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Welcome to Your Dashboard, <?php echo htmlspecialchars($user['name']); ?>!</h1>
+            <nav>
+                <a href="profile.php">Profile</a>
+                <a href="order-history.php">Order History</a>
+                <a href="logout.php">Logout</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="dashboard-info">
+                <h2>Your Information</h2>
+                <p>View and manage your account details.</p>
+            </section>
+
+            <section class="dashboard-products">
+                <h2>Available Products</h2>
+                <p>Explore our products and make purchases.</p>
+                <!-- Add product cards or items here -->
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Uni Bee. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

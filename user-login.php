@@ -1,45 +1,26 @@
 <?php
-session_start(); // Start session to store user info
+session_start();
+include 'db.php';
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "unibee";
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+    // Check if the user exists in the users table
+    $user_result = $conn->query("SELECT * FROM users WHERE email='$email'");
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Get user input
-$email = $_POST['email'];
-$password = $_POST['password'];
-
-// Check if email exists
-$sql = "SELECT * FROM users WHERE email=?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    
-    if (password_verify($password, $row['password'])) { // Verify password
-        $_SESSION['user_id'] = $row['id']; // Store session
-        $_SESSION['user_name'] = $row['name']; // Store username
-        
-        header("Location: dashboard.php"); // Redirect to user dashboard
-        exit(); // Stop further execution
+    if ($user_result->num_rows > 0) {
+        $user_row = $user_result->fetch_assoc();
+        if (password_verify($password, $user_row['password'])) {
+            $_SESSION['user_id'] = $user_row['id']; // Store user info in session
+            $_SESSION['role'] = 'user'; // Role as user
+            header('Location: user-dashboard.php'); // Redirect to user dashboard
+            exit;
+        } else {
+            echo 'Invalid password for user.';
+        }
     } else {
-        echo "<script>alert('Invalid credentials'); window.location.href='login.html';</script>";
+        echo 'No user found.';
     }
-} else {
-    echo "<script>alert('No user found'); window.location.href='login.html';</script>";
 }
-
-$conn->close();
 ?>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product History</title>
+    <link rel="stylesheet" href="css/product-history.css">
+</head>
+<body>
+
+    <!-- Sidebar (reuse your admin-dashboard sidebar for consistency) -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Uni Bee</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.php">Dashboard</a></li>
+            <li><a href="add-product.php">Add Products</a></li>
+            <li><a href="product-history.php">Product History</a></li>
+            <li><a href="sales-report.php">Sales Report</a></li>
+            <li><a href="logout.php" class="logout-button">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <h1>Product History</h1>
+        <p>View all products added to the store along with their details.</p>
+
+        <!-- Product History Table -->
+        <table class="product-history-table">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                    <th>Date Added</th>
+                </tr>
+            </thead>
+            <tbody id="product-history-body">
+                <!-- Data will be populated from the product-history.php script -->
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

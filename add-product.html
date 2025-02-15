@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Products - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin-dashboard.css">
+    <style>
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        td input, td textarea, td select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        td textarea {
+            height: 80px;
+        }
+        td input[type="number"] {
+            width: 80px;
+        }
+        /* Button Styling */
+        button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* Sidebar Styling */
+        .sidebar {
+            width: 200px;
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar h2 {
+            text-align: center;
+            font-size: 24px;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar-menu li {
+            margin: 10px 0;
+        }
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        .sidebar-menu a:hover {
+            background-color: #444;
+            padding: 5px;
+        }
+        /* Main Content Styling */
+        .main-content {
+            margin-left: 220px;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Uni Bee</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin-dashboard.html">Dashboard</a></li>
+            <li><a href="add-product.html">Add Products</a></li>
+            <li><a href="product-history.html">Product History</a></li>
+            <li><a href="sales-report.html">Sales Report</a></li>
+            <li><a href="logout.html">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Add New Products</h1>
+        
+        <!-- Form for adding products -->
+        <form action="add-product.php" method="POST" enctype="multipart/form-data">
+            <table id="product-table">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Product Description</th>
+                        <th>Product Price ($)</th>
+                        <th>Offer (%)</th>
+                        <th>Offer Price ($)</th>
+                        <th>Product Image</th>
+                        <th>Available Stock</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="product-container">
+                    <!-- Product entries will be added here dynamically -->
+                    <tr class="product-entry">
+                        <td><input type="text" name="product_id[]" readonly></td> <!-- Read-only Product ID -->
+                        <td><input type="text" name="product_name[]" required></td>
+                        <td><textarea name="product_description[]" required></textarea></td>
+                        <td><input type="number" name="product_price[]" required step="0.01" onchange="calculateOfferPrice(this)"></td>
+                        <td><input type="number" name="offer[]" required step="1" min="0" max="100" onchange="calculateOfferPrice(this)">      
+                          <button type="button" onclick="showPriceDetails(this)">Show Price Details</button>
+                        </td>
+                        <td><input type="text" name="offer_price[]" readonly></td> <!-- Displaying the offer price -->
+                        <td><input type="file" name="product_image[]" required></td>
+                        <td><input type="number" name="available_stock[]" required></td>
+                        <td>
+                            <button type="button" onclick="removeProduct(this)">Remove</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <button type="button" onclick="addProduct()">Add Another Product</button>
+            <button type="submit">Submit Products</button>
+        </form>
+    </div>
+
+    <script>
+        let productCount = 1;  // Starting product count (default is one product)
+        
+        function addProduct() {
+            const productContainer = document.getElementById('product-container');
+            const newProductRow = document.createElement('tr');
+            newProductRow.classList.add('product-entry');
+            newProductRow.innerHTML = ` 
+                <td><input type="text" name="product_id[]" value="${productCount}" readonly></td> <!-- Product ID -->
+                <td><input type="text" name="product_name[]" required></td>
+                <td><textarea name="product_description[]" required></textarea></td>
+                <td><input type="number" name="product_price[]" required step="0.01" onchange="calculateOfferPrice(this)"></td>
+                <td><input type="number" name="offer[]" required step="1" min="0" max="100" onchange="calculateOfferPrice(this)">
+                                        <button type="button" onclick="showPriceDetails(this)">Show Price Details</button>
+                </td>
+                <td><input type="text" name="offer_price[]" readonly></td> <!-- Offer Price -->
+                <td><input type="file" name="product_image[]" required></td>
+                <td><input type="number" name="available_stock[]" required></td>
+                <td>
+                    <button type="button" onclick="removeProduct(this)">Remove</button>
+                </td>
+            `;
+            productContainer.appendChild(newProductRow);
+            productCount++;
+        }
+
+        function removeProduct(button) {
+            button.parentElement.parentElement.remove();
+        }
+
+        function calculateOfferPrice(element) {
+            const row = element.closest('tr');
+            const price = parseFloat(row.querySelector('[name="product_price[]"]').value);
+            const offer = parseFloat(row.querySelector('[name="offer[]"]').value);
+
+            if (price && offer >= 0 && offer <= 100) {
+                const discountPrice = price - (price * offer / 100);
+                row.querySelector('[name="offer_price[]"]').value = discountPrice.toFixed(2);
+
+                if (offer > 0) {
+                    row.querySelector('[name="product_price[]"]').style.textDecoration = 'line-through';
+                } else {
+                    row.querySelector('[name="product_price[]"]').style.textDecoration = 'none';
+                }
+            }
+        }
+
+        function showPriceDetails(button) {
+            const row = button.closest('tr');
+            const price = parseFloat(row.querySelector('[name="product_price[]"]').value);
+            const offer = parseFloat(row.querySelector('[name="offer[]"]').value);
+
+            if (price && offer >= 0 && offer <= 100) {
+                const discountPrice = price - (price * offer / 100);
+                alert(`Original Price: $${price.toFixed(2)}\nOffer: ${offer}%\nDiscounted Price: $${discountPrice.toFixed(2)}`);
+            } else {
+                alert("Please provide valid price and offer percentage.");
+            }
+        }
+    </script>
+</body>
+</html>
