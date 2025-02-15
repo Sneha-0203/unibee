@@ -123,7 +123,7 @@
                 <tbody id="product-container">
                     <!-- Product entries will be added here dynamically -->
                     <tr class="product-entry">
-                        <td><input type="text" name="product_id[]" readonly></td> <!-- Read-only Product ID -->
+                        <td><input type="text" name="product_id[]" required ></td> <!-- Read-only Product ID -->
                         <td><input type="text" name="product_name[]" required></td>
                         <td><textarea name="product_description[]" required></textarea></td>
                         <td><input type="number" name="product_price[]" required step="0.01" onchange="calculateOfferPrice(this)"></td>
