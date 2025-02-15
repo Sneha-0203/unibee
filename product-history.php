@@ -13,6 +13,7 @@ if (mysqli_num_rows($result) > 0) {
                 <th>New Stock</th>
                 <th>Details</th>
                 <th>Date</th>
+                <th>Modify</th>
             </tr>";
     while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr>
@@ -21,6 +22,7 @@ if (mysqli_num_rows($result) > 0) {
                 <td>{$row['new_stock']}</td>
                 <td>{$row['details']}</td>
                 <td>{$row['created_at']}</td>
+                <td><a href='modify-product.php?id={$row['id']}'>Modify</a></td>
               </tr>";
     }
     echo "</table>";

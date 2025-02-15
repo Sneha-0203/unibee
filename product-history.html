@@ -4,85 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product History - Uni Bee</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #333;
-            color: white;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 20px;
-        }
-        .container {
-            margin-left: 270px;
-            width: 80%;
-            padding: 20px;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-        }
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            width: 300px;
-        }
-        button {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+    
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Uni Bee</h2>
-        <ul>
-            <li><a href="admin-dashboard.html">Dashboard</a></li>
-            <li><a href="add-product.html">Add Products</a></li>
-            <li><a href="product-history.html">Product History</a></li>
-            <li><a href="sales-report.html">Sales Report</a></li>
-            <li><a href="logout.html">Logout</a></li>
-        </ul>
-    </div>
-
     <div class="container">
-        <header>
-            <h1>Product History Lookup</h1>
-        </header>
-
-        <section>
-            <h2>Search Product</h2>
-            <input type="text" id="productCode" placeholder="Enter Product Code">
-            <button onclick="searchProduct()">Search</button>
-        </section>
-
-        <section id="productDetails">
-            <h2>Product Details</h2>
-            <p id="details"></p>
-        </section>
+        <h1>Product History</h1>
+        <table border="1" cellspacing="0" cellpadding="10">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Action</th>
+                    <th>New Stock</th>
+                    <th>Details</th>
+                    <th>Date</th>
+                    <th>Modify</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- PHP will populate this section -->
+            </tbody>
+        </table>
     </div>
-
-    <script>
-        function searchProduct() {
-            const productCode = document.getElementById('productCode').value;
-            const details = {
-                '001': 'Product: Nike Air Max | Price: $120 | Stock: 50 units',
-                '002': 'Product: Adidas UltraBoost | Price: $150 | Stock: 30 units'
-            };
-            document.getElementById('details').innerText = details[productCode] || 'Product not found';
-        }
-    </script>
 </body>
 </html>

@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       VALUES ('$product_id', '$action', '$stock', '$details')";
 
     if (mysqli_query($conn, $history_query)) {
-        echo "<script>alert('Details added! Redirecting to history page.');</script>";
         header("Location: product-history.php");
         exit();
     } else {
