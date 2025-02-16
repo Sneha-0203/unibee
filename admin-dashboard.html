@@ -14,7 +14,6 @@
             height: 100vh;
         }
 
-        /* Sidebar Styles */
         .sidebar {
             width: 250px;
             background-color: #2a9d8f;
@@ -30,10 +29,6 @@
             font-size: 24px;
             font-weight: bold;
             padding-bottom: 20px;
-        }
-        .sidebar-menu {
-            list-style-type: none;
-            padding: 0;
         }
         .sidebar-menu li {
             padding: 15px 20px;
@@ -54,22 +49,12 @@
             font-weight: bold;
         }
 
-        /* Main Content Styles */
         .main-content {
             margin-left: 250px;
             padding: 40px;
             background-color: #f4f4f4;
-            transition: margin-left 0.3s;
         }
-        h1 {
-            color: #2a9d8f;
-        }
-        p {
-            font-size: 16px;
-            color: #333;
-        }
-
-        /* Hamburger Menu Styles */
+        
         .hamburger {
             display: none;
             font-size: 30px;
@@ -82,7 +67,6 @@
             z-index: 1000;
         }
 
-        /* Responsive Styles */
         @media screen and (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -96,50 +80,43 @@
             .sidebar.open {
                 transform: translateX(0);
             }
-            .main-content.shift {
-                margin-left: 250px;
-            }
         }
     </style>
 </head>
 <body>
-
-    <!-- Hamburger Menu -->
     <div class="hamburger" onclick="toggleSidebar()">☰</div>
-
-    <!-- Sidebar -->
+    
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            Uni Bee
-        </div>
+        <div class="sidebar-header">Uni Bee</div>
         <ul class="sidebar-menu">
-            <li><a href="admin-dashboard.php">Dashboard</a></li>
-            <li><a href="add-product.php">Add Products</a></li>
-            <li><a href="product-history.php">Product History</a></li>
-            <li><a href="sales-report.php">Sales Report</a></li>
-            <li><a href="admin-logout.php" class="logout-button">Logout</a></li>
+            <li><a href="admin-dashboard.html">Dashboard</a></li>
+            <li><a href="add-product.html">Add Products</a></li>
+            <li><a href="product-history.html">Product History</a></li>
+            <li><a href="sales-report.html">Sales Report</a></li>
+            <li><a href="#" class="logout-button" onclick="confirmLogout()">Logout</a></li>
         </ul>
     </div>
-   
-    <!-- Main Content -->
+
     <div class="main-content" id="main-content">
         <h1>Welcome, Admin!</h1>
-        <p>Manage your store efficiently with the tools below.</p>
         <p>Hello, <span id="admin-name"></span>! Your last login was at <span id="admin-last-login"></span>.</p>
     </div>
 
     <script>
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('main-content');
-            sidebar.classList.toggle('open');
-            content.classList.toggle('shift');
+            document.getElementById('sidebar').classList.toggle('open');
         }
 
-        // Display admin details using PHP values
-        document.getElementById('admin-name').innerText = "<?php echo htmlspecialchars($admin['name'] ?? 'Admin'); ?>";
-        document.getElementById('admin-last-login').innerText = "<?php echo $admin['last_login'] ?? 'N/A'; ?>";
+        function confirmLogout() {
+            const saveChanges = confirm("Do you want to save your changes before logging out?");
+            if (saveChanges) {
+                alert("Changes saved successfully!");
+            }
+            const confirmLogout = confirm("Are you sure you want to log out?");
+            if (confirmLogout) {
+                window.location.href = 'index.html';
+            }
+        }
     </script>
-
 </body>
 </html>
