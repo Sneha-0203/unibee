@@ -4,65 +4,172 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Products - Admin Dashboard</title>
-        <link rel="stylesheet" href="styles.css">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; margin: 0; }
+        .sidebar { width: 200px; float: left; padding: 20px; background: #333; color: #fff; }
+        .sidebar a { color: #fff; text-decoration: none; display: block; padding: 10px; }
+        .sidebar a:hover { background: #575757; }
+        .main-content { margin-left: 220px; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+        .calculate-btn { padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                float: none;
+                padding: 10px;
+                text-align: center;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 10px;
+            }
+            .sidebar h2 {
+                margin-bottom: 10px;
+            }
+            .sidebar a {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar a {
+                padding: 6px;
+                font-size: 12px;
+            }
+            .main-content {
+                padding: 5px;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Sidebar -->
     <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>Uni Bee</h2>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="admin-dashboard.html">Dashboard</a></li>
-            <li><a href="add-product.html">Add Products</a></li>
-            <li><a href="product-history.html">Product History</a></li>
-            <li><a href="sales-report.html">Sales Report</a></li>
-            <li><a href="logout.html">Logout</a></li>
-        </ul>
+        <h2>Uni Bee</h2>
+        <a href="admin-dashboard.html">Dashboard</a>
+        <a href="add-products.html">Add Products</a>
+        <a href="product-history.html">Product History</a>
+        <a href="sales-report.html">Sales Report</a>
+        <a href="logout.html">Logout</a>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <h1>Add New Products</h1>
-        
-        <!-- Form for adding products -->
-        <form action="add-product.php" method="POST" enctype="multipart/form-data">
-            <table id="product-table">
+        <h1>Add Products</h1>
+        <form action="save-product.php" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <table>
                 <thead>
                     <tr>
+                        <th>Product ID</th>
                         <th>Product Name</th>
-                        <th>Product Description</th>
-                        <th>Product Price ($)</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Price ($)</th>
                         <th>Offer (%)</th>
                         <th>Offer Price ($)</th>
-                        <th>Product Image</th>
-                        <th>Available Stock</th>
+                        <th>Action</th>
+                        <th>Image</th>
+                        <th>Stock</th>
+                        <th>Supplier Name</th>
+                        <th>Supplier Contact</th>
+                        <th>Supplier Email</th>
+                        <th>Supplier Address</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="product-container">
                     <tr class="product-entry">
+                        <td><input type="text" name="product_id[]" required></td>
                         <td><input type="text" name="product_name[]" required></td>
+                        <td>
+                            <select name="category[]" required>
+                                <option value="Sports">Sports</option>
+                                <option value="Casual">Casual</option>
+                                <option value="Formal">Formal</option>
+                                <option value="Modify">Modify</option>
+                            </select>
+                        </td>
                         <td><textarea name="product_description[]" required></textarea></td>
-                        <td><input type="number" name="product_price[]" required step="0.01" onchange="calculateOfferPrice(this)"></td>
-                        <td><input type="number" name="offer[]" required step="1" min="0" max="100" onchange="calculateOfferPrice(this)"></td>
-                        <td><input type="text" name="offer_price[]" readonly></td>
+                        <td><input type="number" name="product_price[]" required step="0.01"></td>
+                        <td><input type="number" name="offer[]" required step="1" min="0" max="100"></td>
+                        <td>
+                            <input type="text" name="offer_price[]" readonly>
+                            <button type="button" class="calculate-btn" onclick="calculateOfferPrice(this)">Calculate</button>
+                        </td>
                         <td><input type="file" name="product_image[]" required></td>
                         <td><input type="number" name="available_stock[]" required></td>
-                        <td>
-                            <button type="button" onclick="removeProduct(this)">Remove</button>
-                        </td>
+                        <td><input type="text" name="supplier_name[]" required></td>
+                        <td><input type="text" name="supplier_contact[]" required></td>
+                        <td><input type="email" name="supplier_email[]" required></td>
+                        <td><input type="text" name="supplier_address[]" required></td>
+                        <td><button type="button" onclick="removeProduct(this)">Remove</button></td>
                     </tr>
                 </tbody>
             </table>
-            
             <button type="button" onclick="addProduct()">Add Another Product</button>
             <button type="submit">Submit Products</button>
         </form>
     </div>
 
     <script>
-        // Add your JavaScript functions here
+        // Function to calculate the offer price
+        function calculateOfferPrice(button) {
+            // Get the parent row of the clicked button
+            const row = button.closest('tr');
+
+            // Get the price and offer percentage values
+            const price = parseFloat(row.querySelector('input[name="product_price[]"]').value);
+            const offer = parseFloat(row.querySelector('input[name="offer[]"]').value);
+
+            // Calculate the offer price
+            if (!isNaN(price) && !isNaN(offer)) {
+                const offerPrice = price - (price * (offer / 100));
+                row.querySelector('input[name="offer_price[]"]').value = offerPrice.toFixed(2);
+            } else {
+                alert('Please enter valid price and offer percentage.');
+            }
+        }
+
+        // Function to add a new product row
+        function addProduct() {
+            const container = document.getElementById('product-container');
+            const newRow = container.querySelector('.product-entry').cloneNode(true);
+            newRow.querySelectorAll('input').forEach(input => input.value = ''); // Clear input values
+            newRow.querySelector('textarea').value = ''; // Clear textarea value
+            container.appendChild(newRow);
+        }
+
+        // Function to remove a product row
+        function removeProduct(button) {
+            const row = button.closest('tr');
+            if (document.querySelectorAll('.product-entry').length > 1) {
+                row.remove();
+            } else {
+                alert('You cannot remove the last row.');
+            }
+        }
+
+        // Function to validate the form before submission
+        function validateForm() {
+            const rows = document.querySelectorAll('.product-entry');
+            for (const row of rows) {
+                const price = row.querySelector('input[name="product_price[]"]').value;
+                const offer = row.querySelector('input[name="offer[]"]').value;
+                if (!price || !offer) {
+                    alert('Please fill all fields before submitting.');
+                    return false;
+                }
+            }
+            return true;
+        }
     </script>
 </body>
 </html>
