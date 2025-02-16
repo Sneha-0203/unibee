@@ -1,25 +1,32 @@
 <?php
-// Database connection
-$conn = new mysqli('localhost', 'username', 'password', 'database_name');
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// Connect to database
+include 'db.php';
 
-// Fetch all products from the database
-$sql = "SELECT * FROM products";
-$result = $conn->query($sql);
+// Fetch all product history
+$query = "SELECT * FROM products";
+$result = mysqli_query($conn, $query);
 
-$products = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $products[] = $row;
+if(mysqli_num_rows($result) > 0) {
+    while($row = mysqli_fetch_assoc($result)) {
+        echo "<tr>
+                <td>{$row['product_id']}</td>
+                <td>{$row['product_name']}</td>
+                <td>{$row['category']}</td>
+                <td>{$row['description']}</td>
+                <td>{$row['price']}</td>
+                <td>{$row['offer']}</td>
+                <td>{$row['offer_price']}</td>
+                <td><img src='uploads/{$row['product_image']}' alt='Image' width='50'></td>
+                <td>{$row['stock']}</td>
+                <td>{$row['supplier_name']}</td>
+                <td>{$row['supplier_contact']}</td>
+                <td>{$row['supplier_email']}</td>
+                <td>{$row['supplier_address']}</td>
+              </tr>";
     }
+} else {
+    echo "<tr><td colspan='14'>No product history found.</td></tr>";
 }
 
-// Close the database connection
-$conn->close();
-
-// Return data as JSON
-header('Content-Type: application/json');
-echo json_encode($products);
+mysqli_close($conn);
 ?>

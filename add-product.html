@@ -5,50 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Products - Admin Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; margin: 0; }
-        .sidebar { width: 200px; float: left; padding: 20px; background: #333; color: #fff; }
-        .sidebar a { color: #fff; text-decoration: none; display: block; padding: 10px; }
-        .sidebar a:hover { background: #575757; }
-        .main-content { margin-left: 220px; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        .sidebar { width: 220px; position: fixed; height: 100%; background: #2c3e50; color: #fff; padding: 20px; overflow-y: auto; }
+        .sidebar a { color: #fff; text-decoration: none; display: block; padding: 12px; transition: background 0.3s; }
+        .sidebar a:hover { background: #34495e; }
+        .main-content { margin-left: 240px; padding: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
-        .calculate-btn { padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        th { background-color: #16a085; color: white; }
+        .calculate-btn, button[type="submit"], button[type="button"] {
+            padding: 8px 12px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .calculate-btn:hover, button[type="submit"]:hover, button[type="button"]:hover { background-color: #2ecc71; }
 
-        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .sidebar { width: 180px; }
+            .main-content { margin-left: 200px; }
+        }
+        
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                float: none;
-                padding: 10px;
-                text-align: center;
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 10px;
-            }
-            .sidebar h2 {
-                margin-bottom: 10px;
-            }
-            .sidebar a {
-                padding: 8px;
-                font-size: 14px;
-            }
+            .sidebar { width: 100%; height: auto; position: relative; text-align: center; }
+            .main-content { margin-left: 0; padding: 10px; }
+            th, td { font-size: 12px; padding: 5px; }
+            .calculate-btn, button { font-size: 12px; padding: 5px 8px; }
         }
 
         @media (max-width: 480px) {
-            .sidebar a {
-                padding: 6px;
-                font-size: 12px;
-            }
-            .main-content {
-                padding: 5px;
-            }
-            table {
-                font-size: 12px;
-            }
-            th, td {
-                padding: 5px;
-            }
+            th, td { font-size: 10px; padding: 3px; }
+            .sidebar a { padding: 8px; font-size: 12px; }
+            .calculate-btn, button { font-size: 10px; padding: 4px 6px; }
         }
     </style>
 </head>
@@ -61,8 +52,8 @@
         <a href="sales-report.html">Sales Report</a>
         <a href="logout.html">Logout</a>
     </div>
-
     <div class="main-content">
+        <h1>Add Products</h1>
         <h1>Add Products</h1>
         <form action="save-product.php" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
             <table>
@@ -120,43 +111,90 @@
     </div>
 
     <script>
-        // Function to calculate the offer price
-        function calculateOfferPrice(button) {
-            // Get the parent row of the clicked button
-            const row = button.closest('tr');
+        // ✅ 1. JavaScript Form Validation (Price, Offer, Email, Contact)
+function validatePrice(input) {
+    if (input.value < 0) {
+        alert('Price cannot be negative!');
+        input.value = '';
+    }
+}
 
-            // Get the price and offer percentage values
-            const price = parseFloat(row.querySelector('input[name="product_price[]"]').value);
-            const offer = parseFloat(row.querySelector('input[name="offer[]"]').value);
+function checkStock(input) {
+    if (input.value < 1) {
+        alert('Stock must be at least 1');
+        input.value = '';
+    }
+}
 
-            // Calculate the offer price
-            if (!isNaN(price) && !isNaN(offer)) {
-                const offerPrice = price - (price * (offer / 100));
-                row.querySelector('input[name="offer_price[]"]').value = offerPrice.toFixed(2);
-            } else {
-                alert('Please enter valid price and offer percentage.');
-            }
+function validateForm() {
+    const emails = document.querySelectorAll('input[name="supplier_email[]"]');
+    const contacts = document.querySelectorAll('input[name="supplier_contact[]"]');
+    for (let i = 0; i < emails.length; i++) {
+        if (!emails[i].value.includes('@')) {
+            alert('Invalid email format');
+            return false;
         }
-
-        // Function to add a new product row
-        function addProduct() {
-            const container = document.getElementById('product-container');
-            const newRow = container.querySelector('.product-entry').cloneNode(true);
-            newRow.querySelectorAll('input').forEach(input => input.value = ''); // Clear input values
-            newRow.querySelector('textarea').value = ''; // Clear textarea value
-            container.appendChild(newRow);
+        if (!/^\d{10}$/.test(contacts[i].value)) {
+            alert('Supplier contact must be a 10-digit number');
+            return false;
         }
+    }
+    return true;
+}
 
-        // Function to remove a product row
-        function removeProduct(button) {
-            const row = button.closest('tr');
-            if (document.querySelectorAll('.product-entry').length > 1) {
-                row.remove();
-            } else {
-                alert('You cannot remove the last row.');
-            }
-        }
+// ✅ 2. Confirmation Alert Before Submission
+function confirmSubmission() {
+    return confirm("Are you sure you want to submit these products?");
+}
 
+// ✅ 3. Offer Price Calculation
+function calculateOfferPrice(input) {
+    const row = input.closest('tr');
+    const price = parseFloat(row.querySelector('input[name="product_price[]"]').value);
+    const offer = parseFloat(input.value);
+    if (!isNaN(price) && !isNaN(offer)) {
+        const offerPrice = price - (price * (offer / 100));
+        row.querySelector('input[name="offer_price[]"]').value = offerPrice.toFixed(2);
+    }
+}
+
+// ✅ 4. Image Preview Feature
+function showPreview(input) {
+    const row = input.closest('tr');
+    const preview = row.querySelector('.preview');
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = '#';
+        preview.style.display = 'none';
+    }
+}
+
+// ✅ 5. Add Another Product (Pagination Effect)
+function addProduct() {
+    const container = document.getElementById('product-container');
+    const newRow = container.querySelector('.product-entry').cloneNode(true);
+    newRow.querySelectorAll('input').forEach(input => input.value = '');
+    newRow.querySelectorAll('textarea').forEach(input => input.value = '');
+    newRow.querySelector('.preview').src = '#';
+    newRow.querySelector('.preview').style.display = 'none';
+    container.appendChild(newRow);
+}
+
+// ✅ 6. Remove a Product Row
+function removeProduct(button) {
+    const row = button.closest('tr');
+    if (document.querySelectorAll('.product-entry').length > 1) {
+        row.remove();
+    } else {
+        alert('You cannot remove the last product row.');
+}
         // Function to validate the form before submission
         function validateForm() {
             const rows = document.querySelectorAll('.product-entry');
