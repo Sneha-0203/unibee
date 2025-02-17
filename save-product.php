@@ -1,39 +1,79 @@
 <?php
 // Database connection
-$conn = new mysqli('localhost', 'root', '', 'unibee');
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "uni_bee";
 
-// Check connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Save multiple products
+// Handle file uploads
+function uploadImage($image) {
+    $target_dir = "uploads/";
+    $target_file = $target_dir . basename($image["name"]);
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    
+    // Check if file is an image
+    $check = getimagesize($image["tmp_name"]);
+    if ($check === false) {
+        return false;
+    }
+
+    // Check file size (5MB maximum)
+    if ($image["size"] > 5000000) {
+        return false;
+    }
+
+    // Allow certain file formats
+    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+        return false;
+    }
+
+    if (move_uploaded_file($image["tmp_name"], $target_file)) {
+        return $target_file;
+    } else {
+        return false;
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $product_ids = $_POST['product_id'];
     $product_names = $_POST['product_name'];
     $categories = $_POST['category'];
-    $descriptions = $_POST['product_description'];
     $prices = $_POST['product_price'];
     $offers = $_POST['offer'];
     $offer_prices = $_POST['offer_price'];
-    $stocks = $_POST['available_stock'];
-    $supplier_names = $_POST['supplier_name'];
-    $supplier_contacts = $_POST['supplier_contact'];
-    $supplier_emails = $_POST['supplier_email'];
-    $supplier_addresses = $_POST['supplier_address'];
+    $stock = $_POST['available_stock'];
+    $product_images = $_FILES['product_image'];
 
-    for ($i = 0; $i < count($product_ids); $i++) {
-        $sql = "INSERT INTO products 
-                (product_id, product_name, category, description, price, offer, offer_price, stock, supplier_name, supplier_contact, supplier_email, supplier_address) 
-                VALUES 
-                ('{$product_ids[$i]}', '{$product_names[$i]}', '{$categories[$i]}', '{$descriptions[$i]}', '{$prices[$i]}', '{$offers[$i]}', '{$offer_prices[$i]}', '{$stocks[$i]}', '{$supplier_names[$i]}', '{$supplier_contacts[$i]}', '{$supplier_emails[$i]}', '{$supplier_addresses[$i]}')";
+    foreach ($product_names as $index => $product_name) {
+        // Calculate offer price
+        $offer_price = isset($offers[$index]) && $offers[$index] > 0 ? $prices[$index] - ($prices[$index] * $offers[$index] / 100) : $prices[$index];
 
-        $conn->query($sql);
+        // Upload image
+        $image_url = uploadImage($product_images['tmp_name'][$index]);
+        if (!$image_url) {
+            echo "Image upload failed for product: $product_name";
+            continue;
+        }
+
+        // Prepare SQL query
+        $stmt = $conn->prepare("INSERT INTO products (product_name, category, price, offer, offer_price, stock, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssddids", $product_name, $categories[$index], $prices[$index], $offers[$index], $offer_price, $stock[$index], $image_url);
+        
+        if ($stmt->execute()) {
+            echo "Product '$product_name' added successfully.";
+        } else {
+            echo "Error adding product: " . $stmt->error;
+        }
     }
 
-    // Redirect to Product History
-    header("Location: product-history.html");
-    exit;
+    // Redirect to product history page after submission
+    header("Location: product-history.php");
+    exit();
 }
 
 $conn->close();

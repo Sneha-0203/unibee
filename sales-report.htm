@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report - Admin Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        .sidebar { width: 220px; position: fixed; height: 100%; background: #2c3e50; color: #fff; padding: 20px; overflow-y: auto; }
+        .sidebar a { color: #fff; text-decoration: none; display: block; padding: 12px; transition: background 0.3s; }
+        .sidebar a:hover { background: #34495e; }
+        .main-content { margin-left: 240px; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+        th { background-color: #16a085; color: white; }
+        select { padding: 6px; }
+        .filter-btn, button[type="submit"] {
+            padding: 8px 12px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .filter-btn:hover, button[type="submit"]:hover { background-color: #2ecc71; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Uni Bee</h2>
+        <a href="admin-dashboard.html">Dashboard</a>
+        <a href="add-products.html">Add Products</a>
+        <a href="product-history.php">Product History</a>
+        <a href="sales-report.html">Sales Report</a>
+        <a href="logout.html">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Sales Report</h1>
+        <form method="GET" action="sales-report.php">
+            <label for="category">Product Category:</label>
+            <select name="category" id="category">
+                <option value="All">All</option>
+                <option value="Sports">Sports</option>
+                <option value="Casual">Casual</option>
+                <option value="Formal">Formal</option>
+                <option value="Modify">Modify</option>
+            </select>
+            <button type="submit" class="filter-btn">Filter</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Quantity Sold</th>
+                    <th>Total Revenue ($)</th>
+                    <th>Date of Sale</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- PHP Loop Placeholder for Report Rows -->
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -13,5 +13,15 @@
         <input type="password" id="password" name="password" placeholder="Password" required>
         <button type="submit">Sign Up</button>
     </form>
+
+    <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('status') === 'success') {
+        alert('Signup successful! Redirecting to homepage...');
+        window.location.href = 'index.html';
+    } else if (urlParams.get('status') === 'error') {
+        alert('Signup failed. Please try again.');
+    }
+    </script>
 </body>
 </html>

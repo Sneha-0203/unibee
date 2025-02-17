@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,7 +67,7 @@
                         <th>Price ($)</th>
                         <th>Offer (%)</th>
                         <th>Offer Price ($)</th>
-                        <th>Action</th>
+                    
                         <th>Image</th>
                         <th>Stock</th>
                         <th>Supplier Name</th>
@@ -148,15 +149,20 @@ function confirmSubmission() {
 }
 
 // ✅ 3. Offer Price Calculation
-function calculateOfferPrice(input) {
-    const row = input.closest('tr');
+
+function calculateOfferPrice(button) {
+    const row = button.closest('tr');
     const price = parseFloat(row.querySelector('input[name="product_price[]"]').value);
-    const offer = parseFloat(input.value);
+    const offer = parseFloat(row.querySelector('input[name="offer[]"]').value);
+    
     if (!isNaN(price) && !isNaN(offer)) {
         const offerPrice = price - (price * (offer / 100));
         row.querySelector('input[name="offer_price[]"]').value = offerPrice.toFixed(2);
+    } else {
+        alert('Please enter both Price and Offer Percentage.');
     }
 }
+
 
 // ✅ 4. Image Preview Feature
 function showPreview(input) {
@@ -179,13 +185,26 @@ function showPreview(input) {
 // ✅ 5. Add Another Product (Pagination Effect)
 function addProduct() {
     const container = document.getElementById('product-container');
-    const newRow = container.querySelector('.product-entry').cloneNode(true);
-    newRow.querySelectorAll('input').forEach(input => input.value = '');
-    newRow.querySelectorAll('textarea').forEach(input => input.value = '');
-    newRow.querySelector('.preview').src = '#';
-    newRow.querySelector('.preview').style.display = 'none';
-    container.appendChild(newRow);
+    const productEntry = container.querySelector('.product-entry');
+    
+    // Check if product-entry exists in the container
+    if (productEntry) {
+        const newRow = productEntry.cloneNode(true); // Clone the product entry row
+        newRow.querySelectorAll('input').forEach(input => input.value = ''); // Clear input values
+        newRow.querySelectorAll('textarea').forEach(textarea => textarea.value = ''); // Clear textarea values
+        
+        const previewImage = newRow.querySelector('.preview');
+        if (previewImage) {
+            previewImage.src = '#'; // Reset image preview source
+            previewImage.style.display = 'none'; // Hide preview image
+        }
+        
+        container.appendChild(newRow); // Add the new row to the container
+    } else {
+        console.error('No product-entry element found in the container.');
+    }
 }
+
 
 // ✅ 6. Remove a Product Row
 function removeProduct(button) {
@@ -208,6 +227,6 @@ function removeProduct(button) {
             }
             return true;
         }
+    }
     </script>
 </body>
-</html>

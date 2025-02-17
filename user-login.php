@@ -1,26 +1,36 @@
 <?php
+// user-login.php
 session_start();
 include 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
 
-    // Check if the user exists in the users table
-    $user_result = $conn->query("SELECT * FROM users WHERE email='$email'");
+    // Use prepared statement to prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($user_result->num_rows > 0) {
-        $user_row = $user_result->fetch_assoc();
-        if (password_verify($password, $user_row['password'])) {
-            $_SESSION['user_id'] = $user_row['id']; // Store user info in session
-            $_SESSION['role'] = 'user'; // Role as user
-            header('Location: user-dashboard.php'); // Redirect to user dashboard
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            // Regenerate session ID to prevent session fixation
+            session_regenerate_id(true);
+
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['role'] = 'user';
+
+            // Redirect to user dashboard or homepage
+            header('Location: user-dashboard.html');
             exit;
         } else {
-            echo 'Invalid password for user.';
+            echo '<p style="color:red;">Invalid password. Please try again.</p>';
         }
     } else {
-        echo 'No user found.';
+        echo '<p style="color:red;">No user found with this email. Please check your email and try again.</p>';
     }
+    $stmt->close();
 }
 ?>
