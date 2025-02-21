@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product History - Admin Dashboard</title>
+    <title>Products - Admin Dashboard</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
         .sidebar { width: 220px; position: fixed; height: 100%; background: #2c3e50; color: #fff; padding: 20px; overflow-y: auto; }
@@ -15,24 +15,15 @@
         th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
         th { background-color: #16a085; color: white; }
         
-        input[type="text"], input[type="number"], select, textarea {
-            padding: 5px;
-            width: 95%;
-            box-sizing: border-box;
-        }
+        input, select, textarea { padding: 5px; width: 95%; box-sizing: border-box; }
 
-        button[type="submit"], button[type="button"] {
-            padding: 8px 12px;
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+        button { padding: 8px 12px; background-color: #27ae60; color: white; border: none; cursor: pointer; transition: background-color 0.3s; }
+        button:hover { background-color: #2ecc71; }
 
-        button[type="submit"]:hover, button[type="button"]:hover {
-            background-color: #2ecc71;
-        }
+        .edit-btn { background-color: #f39c12; }
+        .edit-btn:hover { background-color: #e67e22; }
+        .delete-btn { background-color: #c0392b; }
+        .delete-btn:hover { background-color: #e74c3c; }
 
         @media (max-width: 1024px) {
             .sidebar { width: 180px; }
@@ -44,11 +35,6 @@
             .main-content { margin-left: 0; padding: 10px; }
             th, td { font-size: 12px; padding: 5px; }
         }
-
-        @media (max-width: 480px) {
-            th, td { font-size: 10px; padding: 3px; }
-            .sidebar a { padding: 8px; font-size: 12px; }
-        }
     </style>
 </head>
 <body>
@@ -56,13 +42,13 @@
         <h2>Uni Bee</h2>
         <a href="admin-dashboard.html">Dashboard</a>
         <a href="add-products.html">Add Products</a>
-        <a href="product-history.html">Product History</a>
+        <a href="products.html">Products</a>
         <a href="sales-report.html">Sales Report</a>
         <a href="logout.html">Logout</a>
     </div>
 
     <div class="main-content">
-        <h1>Product History</h1>
+        <h1>Products</h1>
         <table>
             <thead>
                 <tr>
@@ -75,16 +61,72 @@
                     <th>Offer Price ($)</th>
                     <th>Image</th>
                     <th>Stock</th>
-                    <th>Supplier Name</th>
-                    <th>Supplier Contact</th>
-                    <th>Supplier Email</th>
-                    <th>Supplier Address</th>
+                    <th>Supplier</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-            <tbody id="product-history-container">
-                <!-- Data will be fetched from PHP -->
+            <tbody id="products-container">
+                <!-- Data fetched from PHP -->
             </tbody>
         </table>
     </div>
+    <script>
+        function fetchProducts() {
+            fetch('product-history.php')
+                .then(response => response.json())
+                .then(data => {
+                    let tableBody = document.getElementById('products-container');
+                    tableBody.innerHTML = '';
+    
+                    if (data.length > 0) {
+                        data.forEach(product => {
+                            tableBody.innerHTML += `
+                                <tr>
+                                    <td>${product.product_id}</td>
+                                    <td>${product.product_name}</td>
+                                    <td>${product.category}</td>
+                                    <td>${product.description}</td>
+                                    <td>$${parseFloat(product.price).toFixed(2)}</td>
+                                    <td>${product.offer}%</td>
+                                    <td>$${parseFloat(product.offer_price).toFixed(2)}</td>
+                                    <td><img src="${product.image}" alt="Product Image" width="80"></td>
+                                    <td>${product.stock}</td>
+                                    <td>${product.supplier_name}</td>
+                                    <td>
+                                        <button class="edit-btn" onclick="editProduct(${product.product_id})">Edit</button>
+                                        <button class="delete-btn" onclick="deleteProduct(${product.product_id})">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        tableBody.innerHTML = '<tr><td colspan="11">No products found.</td></tr>';
+                    }
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+    
+        function editProduct(id) {
+            window.location.href = `edit-product.html?id=${id}`;
+        }
+    
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                fetch(`delete-product.php?id=${id}`, { method: 'GET' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Product deleted successfully.');
+                            fetchProducts();
+                        } else {
+                            alert('Error deleting product.');
+                        }
+                    })
+                    .catch(error => console.error('Error deleting product:', error));
+            }
+        }
+    
+        fetchProducts();
+    </script>
 </body>
 </html>
