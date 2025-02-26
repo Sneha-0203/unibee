@@ -42,11 +42,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // ✅ Use prepared statements to prevent SQL injection
-    $stmt = $conn->prepare("INSERT INTO products (product_name, category, description, price, offer, offer_price, image_url, stock, supplier_name, supplier_contact, supplier_email, supplier_address) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    // ✅ Handle multiple selected sizes
+    $size = isset($_POST['shoe_size']) ? implode(", ", $_POST['shoe_size']) : NULL;
 
-    $stmt->bind_param("sssdddsissss", $product_name, $category, $description, $price, $offer, $offer_price, $image_url, $stock, $supplier_name, $supplier_contact, $supplier_email, $supplier_address);
+    // ✅ Use prepared statements to prevent SQL injection
+    $stmt = $conn->prepare("INSERT INTO products (product_name, category, description, price, offer, offer_price, image_url, stock, supplier_name, supplier_contact, supplier_email, supplier_address, size) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    $stmt->bind_param("sssdddsisssss", $product_name, $category, $description, $price, $offer, $offer_price, $image_url, $stock, $supplier_name, $supplier_contact, $supplier_email, $supplier_address, $size);
 
     if ($stmt->execute()) {
         // ✅ Redirect to PHP product history page (Ensure it fetches from DB)
@@ -60,4 +63,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 $conn->close();
+
 ?>

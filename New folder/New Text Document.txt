@@ -1,0 +1,220 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Feb 24, 2025 at 06:10 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `unibee`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products`
+--
+
+CREATE TABLE `products` (
+  `product_id` int(11) NOT NULL,
+  `product_name` varchar(100) NOT NULL,
+  `category` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `offer` decimal(5,2) DEFAULT NULL,
+  `offer_price` decimal(10,2) GENERATED ALWAYS AS (`price` - `price` * `offer` / 100) STORED,
+  `stock` int(11) NOT NULL CHECK (`stock` >= 0),
+  `image_url` varchar(255) DEFAULT NULL,
+  `supplier_name` varchar(100) DEFAULT NULL,
+  `supplier_contact` varchar(20) DEFAULT NULL,
+  `supplier_email` varchar(100) DEFAULT NULL,
+  `supplier_address` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`product_id`, `product_name`, `category`, `description`, `price`, `offer`, `stock`, `image_url`, `supplier_name`, `supplier_contact`, `supplier_email`, `supplier_address`, `created_at`) VALUES
+(22, 'matter', 'sports', 'jonny sin as doctor ', 500.00, 1.00, 1, 'uploads/WhatsApp Image 2025-01-12 at 05.50.55_4be4d4af.jpg', 'toy boy ', '9998887776', 'iporn@gmail.com', 'in your garden ', '2025-02-21 06:49:20'),
+(23, 'puma ', 'classic', 'rofwkes[pfls\'d,', 23324.00, 43.00, 7, 'uploads/1740366844_certificate.jpg', 'kjiojpo', '0987654321', 'jkjoiijkojoi@gmail.com', 'jijipjpojoilk', '2025-02-24 03:14:04'),
+(24, 'puma shoes', 'sports', 'super shoes ', 3000.00, 3.00, 100, 'uploads/1740369431_WhatsApp Image 2025-02-11 at 22.20.26_2c9abcd3.jpg', 'Sneha', '8431477209', 'jkjoiijkojoi@gmail.com', 'ewiignw', '2025-02-24 03:57:11'),
+(25, 'puma shoes', 'sports', 'super shoes ', 3000.00, 3.00, 100, 'uploads/1740371823_WhatsApp Image 2024-08-11 at 13.41.03_c9d949fa.jpg', 'Sneha', '8431477209', 'jkjoiijkojoi@gmail.com', 'ewiignw', '2025-02-24 04:37:03'),
+(26, 'puma shoes', 'sports', 'super shoes ', 3000.00, 3.00, 100, 'uploads/1740371865_WhatsApp Image 2024-08-11 at 13.41.03_c9d949fa.jpg', 'Sneha', '8431477209', 'jkjoiijkojoi@gmail.com', 'ewiignw', '2025-02-24 04:37:45');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `products`
+--
+ALTER TABLE `products`
+  ADD PRIMARY KEY (`product_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `products`
+--
+ALTER TABLE `products`
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Feb 24, 2025 at 06:15 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `unibee`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `created_at`) VALUES
+(1, '', 'snehas67248@gmail.com', '$2y$10$ZkxeSe6PnUOmOGplkZnAq.gm9EB72zxeLbXA5i5ClN10E5NM5go/m', '2025-02-17 04:03:10'),
+(2, '', 'ads@gmail.com', '$2y$10$7cjz8iyZCpmUbA4pfII9CuZonRzqnjogmblTewRwlu9qOBD1f3GS.', '2025-02-17 05:15:46'),
+(3, 'sneha', 'admin@unibee.com', '$2y$10$ok1yK6zf.TLqV4dSNH7yPuXkZWptrfdrqTg3AW28nsGa2RTN/gJZm', '2025-02-17 08:52:31'),
+(4, 'Emmanuel', 'emman301004@gmail.com', '$2y$10$56C4ySSfUvCCd/cj2LfVbO3ipCgzBScFaE2kcBWEbnpZ44YPUqSFW', '2025-02-17 08:53:28');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Feb 24, 2025 at 06:17 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `unibee`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admins`
+--
+
+CREATE TABLE `admins` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admins`
+--
+
+INSERT INTO `admins` (`id`, `email`, `password`, `created_at`) VALUES
+(1, 'admin@unibee.com', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', '2025-02-17 02:59:06');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `admins`
+--
+ALTER TABLE `admins`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `admins`
+--
+ALTER TABLE `admins`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+

@@ -228,6 +228,7 @@ img {
                 <th>Product Name</th>
                 <th>Category</th>
                 <th>Description</th>
+                <th>Size</th>
                 <th>Price ($)</th>
                 <th>Offer (%)</th>
                 <th>Offer Price ($)</th>
@@ -238,34 +239,34 @@ img {
             </tr>
         </thead>
         <tbody>
-            <?php
-            $sql = "SELECT product_id, product_name, category, description, price, offer, offer_price, image_url, stock, supplier_name FROM products";
-            $result = $conn->query($sql);
+        <?php
+        $sql = "SELECT product_id, product_name, category, description, size, price, offer, offer_price, image_url, stock, supplier_name FROM products";
+        $result = $conn->query($sql);
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr id='row_{$row['product_id']}'>
-                        <td>{$row['product_id']}</td>
-                        <td contenteditable='false' class='editable'>{$row['product_name']}</td>
-                        <td contenteditable='false' class='editable'>{$row['category']}</td>
-                        <td contenteditable='false' class='editable'>{$row['description']}</td>
-                        <td contenteditable='false' class='editable'>{$row['price']}</td>
-                        <td contenteditable='false' class='editable'>{$row['offer']}</td>
-                        <td contenteditable='false' class='editable'>{$row['offer_price']}</td>
-                        <td><img src='{$row['image_url']}' alt='Product Image'></td>
-                        <td contenteditable='false' class='editable'>{$row['stock']}</td>
-                        <td contenteditable='false' class='editable'>{$row['supplier_name']}</td>
-                        <td>
-                            <button class='edit-btn' onclick='editProduct({$row['product_id']})'>Edit</button>
-                            <button class='save-btn' onclick='saveProduct({$row['product_id']})'>Save</button>
-                            <button class='delete-btn' onclick='deleteProduct({$row['product_id']})'>Delete</button>
-                        </td>
-                    </tr>";
-                }
-            } else {
-                echo "<tr><td colspan='11'>No products found</td></tr>";
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr id='row_{$row['product_id']}'>
+                    <td>{$row['product_id']}</td>
+                    <td contenteditable='false' class='editable'>{$row['product_name']}</td>
+                    <td contenteditable='false' class='editable'>{$row['category']}</td>
+                    <td contenteditable='false' class='editable'>{$row['description']}</td>
+                    <td contenteditable='false' class='editable'>{$row['size']}</td> <!-- Added Size -->
+                    <td contenteditable='false' class='editable'>{$row['price']}</td>
+                    <td contenteditable='false' class='editable'>{$row['offer']}</td>
+                    <td contenteditable='false' class='editable'>{$row['offer_price']}</td>
+                    <td><img src='{$row['image_url']}' alt='Product Image'></td>
+                    <td contenteditable='false' class='editable'>{$row['stock']}</td>
+                    <td contenteditable='false' class='editable'>{$row['supplier_name']}</td>
+                    <td>
+                        <button class='edit-btn' onclick='editProduct({$row['product_id']})'>Edit</button>
+                        <button class='save-btn' onclick='saveProduct({$row['product_id']})'>Save</button>
+                        <button class='delete-btn' onclick='deleteProduct({$row['product_id']})'>Delete</button>
+                    </td>
+                </tr>";
             }
-            $conn->close();
+        } else {
+            echo "<tr><td colspan='12'>No products found</td></tr>";
+        }
             ?>
         </tbody>
     </table>
